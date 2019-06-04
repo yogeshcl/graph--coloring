@@ -1,7 +1,5 @@
 // This is the graph coloring program using opengl 
 // yogesh cl  www.yogeshcl.com
-#include "pch.h"
-
 #include<GL/glut.h>
 #include<iostream>
 #include<stdlib.h>
@@ -165,39 +163,6 @@ void coloredge()
 }
 
 //-------------------------------------------------------------------------------------------------------
-
-//void edges() {
-//	int c = 0, inc = 0, d = 1;
-//	int e = rand() % v - 1;;
-//	glPointSize(2);
-//	glColor3f(0, 0, 0);
-//
-//	cout << "edges=" << e * 2;
-//	cout << "vertices=" << v;
-//	for (int i = 0; i < v; i++) {
-//		cout << "i=" << i << endl;
-//		glBegin(GL_LINES);
-//		for (int j = 0; j < v; j++, d++) {
-//			e = rand() % v;
-//			if (d % 2 == 0)
-//				c++;
-//			cout << ver[e][0] << endl;
-//			cout << ver[e][1] << endl;
-//			if (inc > 3)
-//				inc = 0;
-//			edgess[c][inc++] = ver[e][0];
-//
-//			edgess[c][inc++] = ver[e][0];
-//			glVertex2i(ver[e][0], ver[e][1]);
-//
-//		}
-//		glEnd();
-//	}
-//	for (int x = 0; x < c; x++) {
-//		cout << "x1=" << edgess[x][0] << "y1=" << edgess[x][1] << "x2=" << edgess[x][2] << "y2=" << edgess[x][3] << endl;
-//	}
-//
-//}
 
 
 void display()
