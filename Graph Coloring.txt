@@ -1,0 +1,374 @@
+// This is the graph coloring program using opengl 
+// yogesh cl  www.yogeshcl.com
+#include "pch.h"
+
+#include<GL/glut.h>
+#include<iostream>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+#include<conio.h>
+#define MAX 100
+using namespace std;
+
+int ver[100][2];
+int edgess[100][2];
+int v = 1, drawpoints = 0, drawedge = 0;
+int flag = 0;
+int ed = 0, k = 1, cnting = 1;
+int start = 0;
+int edg[50];
+int clring[50];
+int total_no_clrs_used = 0;
+int ct = 3;
+int a, number, G[20][20], c[20];
+void mcoloring(int p);
+int nextvalue(int p);
+float color[10][3] = { {1,0,0},{0,1,0},{0,0,1},{1,1,0},{1,0,1},{0,1,1},{0.5,0.5,1},{0.5,1,0.5},{0.5,1,0.25},{0.25,0.25,0.25} };
+char mainstr[MAX];
+
+void int_str(int rad, char r[])
+{
+	snprintf(r, 10, "%d", rad);
+}
+void float_str(float rad, char r[])
+{
+	snprintf(r, 10, "%f", rad);
+}
+void bitmap_output(int x, int y, char *string, void *font)
+{
+	int len, i;
+
+	glRasterPos2f(x, y);
+	len = (int)strlen(string);
+	for (i = 0; i < len; i++) {
+		glutBitmapCharacter(font, string[i]);
+	}
+}
+void plot()
+{
+	for (int i = 1; i < v; i++) {
+		glPointSize(10);
+		glColor3f(0, 0, 0);
+		glBegin(GL_POINTS);
+		glVertex2i(ver[i][0], ver[i][1]);
+		glEnd();
+		char temp[10];
+		int_str(i, temp);
+		bitmap_output(ver[i][0] + 10, ver[i][1] + 10, temp, GLUT_BITMAP_9_BY_15);
+	}
+	if (drawedge && ed % 2 == 0)
+		for (int i = 0; i < ed; i = i + 2) {
+			glPointSize(10);
+			glColor3f(0, 0, 0);
+			glBegin(GL_LINES);
+			glVertex2i(edgess[i][0], edgess[i][1]);
+			glVertex2i(edgess[i + 1][0], edgess[i + 1][1]);
+			glEnd();
+		}
+	else
+		for (int i = 0; i < ed - 1; i = i + 2) {
+			glPointSize(10);
+			glColor3f(0, 0, 0);
+			glBegin(GL_LINES);
+			glVertex2i(edgess[i][0], edgess[i][1]);
+			glVertex2i(edgess[i + 1][0], edgess[i + 1][1]);
+			glEnd();
+		}
+}
+
+void clrpoints() {
+	int temp;
+	for (int i = 1; i < v; i++) {
+		glPointSize(20);
+		temp = clring[i];
+		cout << color[temp][0] << "," << color[temp][1] << "," << color[temp][2] << endl;
+		glColor3f(color[temp][0], color[temp][1], color[temp][2]);
+		glBegin(GL_POINTS);
+		glVertex2i(ver[i][0], ver[i][1]);
+		glEnd();
+	}
+	start = 1;
+	glutSwapBuffers();
+	//glutPostRedisplay();
+}
+
+
+//--------------------graph coloring algoithm---------
+
+void mcoloring(int p)
+{
+	int u;
+	while (ct > 2)
+	{
+		nextvalue(p);
+		if (c[p] == 0)
+			break;
+		if (p == number)
+		{
+			for (u = 1; u < number; u++) {
+				cout << " " << c[u] - 1;
+				clring[u] = c[u] - 1;
+				total_no_clrs_used = c[u];
+			}
+
+			cout << "total no of colors used is --------------" << total_no_clrs_used << endl;
+			cout << "\n";
+		}
+		else
+			mcoloring(p + 1);
+		ct--;
+	}
+}
+int nextvalue(int p)
+{
+	int l;
+	while (1)
+	{
+		c[p] = (c[p] + 1) % (a + 1);
+		if (c[p] == 0)
+			return 0;
+		for (l = 1; l <= number; l++)
+			if (G[p][l] && c[p] == c[l])
+				break;
+		if (l == number + 1)
+			return 0;
+	}
+}
+void coloredge()
+{
+	int u, edges, x, y;
+	//cout << "Enter the number of Vertices In the Given Graph G:\n";
+	//cin >> number;
+	number = v;
+	cout << "Total number of vertices =" << number << endl;
+	//cout << "Enter the number of edges In the Given Graph G:\n";
+	//cin >> edges;
+	edges = (k + 1) / 2;
+	cout << "Total number of edges =" << edges << endl;
+	for (u = 1; u <= edges; u++)
+	{
+		//cout << "Enter the edge In the Graph : \n";
+		//cin >> x >> y;
+		x = edg[cnting++];
+		y = edg[cnting++];
+		G[x][y] = 1;
+		G[y][x] = 1;
+	}
+	for (u = 1; u <= number; u++)
+		c[u] = 0;
+	//cout << "Enter the number of colors available : \n";
+	//cin >> a;
+	a = 10;
+	cout << "Following are the different ways by which nodes can be colored\n";
+	mcoloring(1);
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+//void edges() {
+//	int c = 0, inc = 0, d = 1;
+//	int e = rand() % v - 1;;
+//	glPointSize(2);
+//	glColor3f(0, 0, 0);
+//
+//	cout << "edges=" << e * 2;
+//	cout << "vertices=" << v;
+//	for (int i = 0; i < v; i++) {
+//		cout << "i=" << i << endl;
+//		glBegin(GL_LINES);
+//		for (int j = 0; j < v; j++, d++) {
+//			e = rand() % v;
+//			if (d % 2 == 0)
+//				c++;
+//			cout << ver[e][0] << endl;
+//			cout << ver[e][1] << endl;
+//			if (inc > 3)
+//				inc = 0;
+//			edgess[c][inc++] = ver[e][0];
+//
+//			edgess[c][inc++] = ver[e][0];
+//			glVertex2i(ver[e][0], ver[e][1]);
+//
+//		}
+//		glEnd();
+//	}
+//	for (int x = 0; x < c; x++) {
+//		cout << "x1=" << edgess[x][0] << "y1=" << edgess[x][1] << "x2=" << edgess[x][2] << "y2=" << edgess[x][3] << endl;
+//	}
+//
+//}
+
+
+void display()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1, 1, 1, 1);
+	glColor3f(1, 0, 0);
+	if (!start) {
+		plot();
+	}
+	if (start) {
+		clrpoints();
+	}
+	char str[] = "GRAPH COLORING";
+	bitmap_output(150, 480, str, GLUT_BITMAP_TIMES_ROMAN_24);
+	char str1[] = "Total number of Vertices =";
+	char str1a[10];
+	int_str(v - 1, str1a);
+	//strcat(mainstr, "lol");
+	bitmap_output(300, 40, str1, GLUT_BITMAP_TIMES_ROMAN_10);
+	bitmap_output(420, 40, str1a, GLUT_BITMAP_TIMES_ROMAN_10);
+	char str2[] = "Total number of Edges   =";
+	char str2a[10];
+	int_str(ed / 2, str2a);
+	//strcat(mainstr, "lol");
+	bitmap_output(300, 25, str2, GLUT_BITMAP_TIMES_ROMAN_10);
+	bitmap_output(420, 25, str2a, GLUT_BITMAP_TIMES_ROMAN_10);
+	char str3[] = "Number of Colors used =";
+	char str3a[10];
+	int_str(total_no_clrs_used, str3a);
+	bitmap_output(300, 10, str3, GLUT_BITMAP_TIMES_ROMAN_10);
+	bitmap_output(420, 10, str3a, GLUT_BITMAP_TIMES_ROMAN_10);
+	glFlush();
+}
+
+void temp(int x, int y)
+{
+	ver[0][v] = x;
+	ver[1][v] = y;
+	v++;
+	glColor3f(0, 0, 1);
+	glBegin(GL_LINES);
+	glVertex2i(x, y);
+	glVertex2i(x + 10, y + 20);
+	glVertex2i(x + 20, y + 30);
+	glEnd();
+
+}
+
+void graphmenu(int id) {
+	switch (id) {
+	case 1: exit(0);
+		break;
+	case 2: drawedge = 0;
+		drawpoints = 1;
+		break;
+	case 3: drawpoints = 0;
+		drawedge = 1;
+		break;
+	case 4:
+		for (int i = 0; i < v; i++) {
+			cout << ver[i][0] << endl;
+			cout << ver[i][1] << endl;
+		}
+		for (int x = 0; x <= ed; x = x + 2) {
+			cout << "x1=" << edgess[x][0] << "y1=" << edgess[x][1] << "x2=" << edgess[x + 1][0] << "y2=" << edgess[x + 1][1] << endl;
+		}
+		coloredge();
+		clrpoints();
+		break;
+	default: break;
+	}
+}
+
+void vertice(int x1, int y1) {
+	glColor3f(0, 1, 0);
+	glBegin(GL_LINE_LOOP);
+	for (int ii = 0; ii < 50; ii++)
+	{
+		float theta = 2.0f * 3.1415926f * float(ii) / float(50);//get the current angle
+		float x = 2 * cosf(theta);//calculate the x component
+		float y = 2 * sinf(theta);//calculate the y component
+		glVertex2f(x + x1, y + y1);//output vertex
+	}
+	glEnd();
+}
+
+void mouse(int btn, int state, int x, int y)
+{
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && drawpoints == 1)
+	{
+		int yy = y + 10;
+		yy -= yy % 20;
+		y = yy;
+		int xx = x + 10;
+		xx -= xx % 20;
+		x = xx;
+		flag = 1;
+		ver[v][0] = x;
+		ver[v][1] = 500 - y;
+		display();
+		cout << v << endl;
+		v++;
+		for (int i = 1; i < v; i++) {
+			cout << ver[i][0] << endl;
+			cout << ver[i][1] << endl;
+		}
+	}
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && drawedge == 1)
+	{
+		int cn = 0;
+		int yy = y + 10;
+		yy -= yy % 20;
+		y = yy;
+		int xx = x + 10;
+		xx -= xx % 20;
+		x = xx;
+		for (int c = 1; c < v; c++) {
+			if (x == ver[c][0] && (500 - y) == ver[c][1]) {
+
+				cout << " value found is " << ver[c][0] << "and" << ver[c][1] << endl;
+				edg[k] = c;
+				k++;
+				break;
+			}
+		}
+
+		edgess[ed][0] = x;
+		edgess[ed][1] = 500 - y;
+		display();
+
+		for (int i = 1; i < k; i = i + 2)
+		{
+			cout << edg[i] << " to " << edg[i + 1] << endl;
+		}
+
+		/*cout << "edges"<<edgess[ed][0]<< endl;
+		cout << "edges"<<edgess[ed][0] << endl;
+*/
+
+/*for (int x = 0; x <= ed; x=x+2) {
+cout << "x1=" << edgess[x][0] << "y1=" << edgess[x][1] << "x2=" << edgess[x + 1][0] << "y2=" << edgess[x + 1][1] << endl;
+}
+		cout << endl;*/
+		ed++;
+		cn++;
+		if (cn % 2 == 0)
+			drawedge = 0;
+	}
+}
+
+void init() {
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, 500, 0, 500);
+}
+
+int main(int arge, char** argv)
+{
+	glutInit(&arge, argv);
+	glutInitWindowSize(500, 500);
+	glutCreateWindow("graph");
+	glutDisplayFunc(display);
+	glutMouseFunc(mouse);
+	init();
+	glutCreateMenu(graphmenu);
+	glutAddMenuEntry("Enter Vertices", 2);
+	glutAddMenuEntry("Draw edges", 3);
+	glutAddMenuEntry("Color the graph", 4);
+	glutAddMenuEntry("Quit", 1);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+	glutMainLoop();
+}
